@@ -17,14 +17,11 @@
 
 package course;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
-import com.mongodb.WriteResult;
+import com.mongodb.*;
 import com.sun.org.apache.bcel.internal.generic.ACONST_NULL;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class BlogPostDAO {
@@ -39,9 +36,8 @@ public class BlogPostDAO {
 
         DBObject post = null;
         // XXX HW 3.2,  Work Here
-
-
-
+        DBObject query = new BasicDBObject("permalink", permalink);
+        post = postsCollection.findOne(query);
         return post;
     }
 
@@ -52,6 +48,13 @@ public class BlogPostDAO {
         List<DBObject> posts = null;
         // XXX HW 3.2,  Work Here
         // Return a list of DBObjects, each one a post from the posts collection
+        DBObject query = new BasicDBObject("date", -1);
+        DBCursor cursor = postsCollection.find().sort(query);
+
+        posts = new ArrayList<DBObject>();
+        while (cursor.hasNext()) {
+            posts.add(cursor.next());
+        }
 
         return posts;
     }
@@ -78,21 +81,22 @@ public class BlogPostDAO {
         // - we created the permalink for you above.
 
         // Build the post object and insert it
+        post.append("author", username);
+        post.append("title", title);
+        post.append("body", body);
+        post.append("permalink", permalink);
+        post.append("date", new Date());
+        post.append("tags", new BasicDBList());
+        post.put("tags", tags);
+        post.append("comments", new BasicDBList());
 
+        postsCollection.insert(post);
 
         return permalink;
     }
 
 
-
-
-   // White space to protect the innocent
-
-
-
-
-
-
+    // White space to protect the innocent
 
 
     // Append a comment to a blog post
@@ -104,7 +108,6 @@ public class BlogPostDAO {
         // - email is optional and may come in NULL. Check for that.
         // - best solution uses an update command to the database and a suitable
         //   operator to append the comment on to any existing list of comments
-
 
 
     }
