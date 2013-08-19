@@ -109,7 +109,18 @@ public class BlogPostDAO {
         // - best solution uses an update command to the database and a suitable
         //   operator to append the comment on to any existing list of comments
 
+        DBObject query = postsCollection.findOne(new BasicDBObject("permalink", permalink));
 
+        BasicDBObject comment = new BasicDBObject();
+        comment.append("author", name);
+        comment.append("body", body);
+        if (email != null){
+            comment.append("email", email);
+        }
+
+        DBObject match = new BasicDBObject("permalink", permalink);
+        DBObject update = new BasicDBObject("comments", comment);
+        postsCollection.update(match, new BasicDBObject("$push", update));
     }
 
 
