@@ -1,0 +1,165 @@
+Finding posts by reverse date : BlogPostDAO.findByDatesDescending()
+-------------------------------------------------------------------
+
+> db.posts.find().sort({date:-1}).limit(10).explain()
+{
+	"cursor" : "BasicCursor",
+	"isMultiKey" : false,
+	"n" : 10,
+	"nscannedObjects" : 1000,
+	"nscanned" : 1000,
+	"nscannedObjectsAllPlans" : 1000,
+	"nscannedAllPlans" : 1000,
+	"scanAndOrder" : true,
+	"indexOnly" : false,
+	"nYields" : 0,
+	"nChunkSkips" : 0,
+	"millis" : 25,
+	"indexBounds" : {
+
+	},
+	"server" : "new-host-5.home:27017"
+}
+
+> db.posts.ensureIndex({date:-1})
+
+> db.posts.find().sort({date:-1}).limit(10).explain()
+{
+	"cursor" : "BtreeCursor date_-1",
+	"isMultiKey" : false,
+	"n" : 10,
+	"nscannedObjects" : 10,
+	"nscanned" : 10,
+	"nscannedObjectsAllPlans" : 10,
+	"nscannedAllPlans" : 10,
+	"scanAndOrder" : false,
+	"indexOnly" : false,
+	"nYields" : 0,
+	"nChunkSkips" : 0,
+	"millis" : 0,
+	"indexBounds" : {
+		"date" : [
+			[
+				{
+					"$maxElement" : 1
+				},
+				{
+					"$minElement" : 1
+				}
+			]
+		]
+	},
+	"server" : "new-host-5.home:27017"
+}
+
+
+Finding post by permalink : BlogPostDAO.findByPermalink()
+---------------------------------------------------------
+
+> db.posts.find({permalink:"TqoHkbHyUgLyCKWgPLqm"}).explain()
+{
+	"cursor" : "BasicCursor",
+	"isMultiKey" : false,
+	"n" : 1,
+	"nscannedObjects" : 1000,
+	"nscanned" : 1000,
+	"nscannedObjectsAllPlans" : 1000,
+	"nscannedAllPlans" : 1000,
+	"scanAndOrder" : false,
+	"indexOnly" : false,
+	"nYields" : 0,
+	"nChunkSkips" : 0,
+	"millis" : 444,
+	"indexBounds" : {
+
+	},
+	"server" : "new-host-5.home:27017"
+}
+
+> db.posts.ensureIndex({permalink:1})
+
+> db.posts.find({permalink:"TqoHkbHyUgLyCKWgPLqm"}).explain()
+{
+	"cursor" : "BtreeCursor permalink_1",
+	"isMultiKey" : false,
+	"n" : 1,
+	"nscannedObjects" : 1,
+	"nscanned" : 1,
+	"nscannedObjectsAllPlans" : 1,
+	"nscannedAllPlans" : 1,
+	"scanAndOrder" : false,
+	"indexOnly" : false,
+	"nYields" : 0,
+	"nChunkSkips" : 0,
+	"millis" : 0,
+	"indexBounds" : {
+		"permalink" : [
+			[
+				"TqoHkbHyUgLyCKWgPLqm",
+				"TqoHkbHyUgLyCKWgPLqm"
+			]
+		]
+	},
+	"server" : "new-host-5.home:27017"
+}
+
+Finding post by tag, reverse date : BlogPostDAO.findByTagDateDescending()
+-------------------------------------------------------------------------
+
+> db.posts.find({tags:"professor"},{tags:1}).sort({date:-1}).explain()
+{
+	"cursor" : "BasicCursor",
+	"isMultiKey" : false,
+	"n" : 4,
+	"nscannedObjects" : 1000,
+	"nscanned" : 1000,
+	"nscannedObjectsAllPlans" : 1000,
+	"nscannedAllPlans" : 1000,
+	"scanAndOrder" : true,
+	"indexOnly" : false,
+	"nYields" : 0,
+	"nChunkSkips" : 0,
+	"millis" : 63,
+	"indexBounds" : {
+
+	},
+	"server" : "new-host-5.home:27017"
+}
+
+> db.posts.ensureIndex({tags:1, date:-1})
+
+> db.posts.find({tags:"professor"},{tags:1}).sort({date:-1}).explain()
+{
+	"cursor" : "BtreeCursor tags_1_date_-1",
+	"isMultiKey" : true,
+	"n" : 4,
+	"nscannedObjects" : 4,
+	"nscanned" : 4,
+	"nscannedObjectsAllPlans" : 4,
+	"nscannedAllPlans" : 4,
+	"scanAndOrder" : false,
+	"indexOnly" : false,
+	"nYields" : 0,
+	"nChunkSkips" : 0,
+	"millis" : 0,
+	"indexBounds" : {
+		"tags" : [
+			[
+				"professor",
+				"professor"
+			]
+		],
+		"date" : [
+			[
+				{
+					"$maxElement" : 1
+				},
+				{
+					"$minElement" : 1
+				}
+			]
+		]
+	},
+	"server" : "new-host-5.home:27017"
+}
+
