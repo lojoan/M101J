@@ -1,0 +1,3 @@
+> use m101
+> db.profile.find({"ns":"school2.students"},{"millis":1}).sort({"millis":-1}).limit(1)
+{ "_id" : ObjectId("521365bf0145f47b14acf443"), "millis" : 15820 }
