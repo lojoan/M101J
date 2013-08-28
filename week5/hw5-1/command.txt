@@ -1,0 +1,12 @@
+> use blog
+> db.posts.aggregate({$project:{comments:1}}, {$unwind:"$comments"}, {$group:{_id:"$comments.author", commentsPerAuthor: {$sum:1}}}, {$sort:{commentsPerAuthor:-1}}, {$limit:1})
+{
+	"result" : [
+		{
+			"_id" : "Mikaela Meidinger",
+			"commentsPerAuthor" : 493
+		}
+	],
+	"ok" : 1
+}
+
