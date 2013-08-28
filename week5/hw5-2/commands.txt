@@ -1,0 +1,28 @@
+$ mongoimport -d zipcodes -c zips zips.json 
+
+> use zipcodes
+
+> db.zips.aggregate({$match:{$or:[{state:"CT"},{state:"NJ"}]}}, {$group:{_id:{"state":"$state", "city":"$city"}, totalPop:{$sum:"$pop"}}}, {$match:{totalPop:{$gte:25000}}}, {$group:{_id:"dummy", average:{$avg:"$totalPop"}}})
+{
+	"result" : [
+		{
+			"_id" : "dummy",
+			"average" : 49748.70731707317
+		}
+	],
+	"ok" : 1
+}
+
+> db.zips.aggregate({$match:{$or:[{state:"NY"},{state:"CA"}]}}, {$group:{_id:{"state":"$state", "city":"$city"}, totalPop:{$sum:"$pop"}}}, {$match:{totalPop:{$gte:25000}}}, {$group:{_id:"dummy", average:{$avg:"$totalPop"}}})
+{
+	"result" : [
+		{
+			"_id" : "dummy",
+			"average" : 82541.46420824295
+		}
+	],
+	"ok" : 1
+}
+
+
+
